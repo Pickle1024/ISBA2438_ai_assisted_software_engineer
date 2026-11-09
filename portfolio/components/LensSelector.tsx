@@ -4,18 +4,26 @@ import Link from "next/link";
 import { useState, type CSSProperties, type ReactNode } from "react";
 
 import FilmFrame from "@/components/FilmFrame";
+import LensViewer from "@/components/LensViewer";
 import type { Project } from "@/data/projects";
 
 export default function LensSelector({ projects, children }: { projects: Project[]; children?: ReactNode }) {
   const [selectedSlug, setSelectedSlug] = useState(projects[0].slug);
   const selected = projects.find((project) => project.slug === selectedSlug) ?? projects[0];
+  const selectedIndex = projects.indexOf(selected);
+
+  function turnLens(direction: number) {
+    const next = (selectedIndex + direction + projects.length) % projects.length;
+    setSelectedSlug(projects[next].slug);
+  }
 
   return (
     <section className="lens-selector" style={{ "--accent": selected.accent } as CSSProperties}>
       {children}
       <div className="lens-stage">
         <div className="lens-copy">
-          <p className="eyebrow">Lens {projects.indexOf(selected) + 1} of {projects.length}</p>
+          <LensViewer mark={selectedIndex} accent={selected.accent} onTurn={turnLens} />
+          <p className="eyebrow">Lens {selectedIndex + 1} of {projects.length}</p>
           <h1>{selected.lens}</h1>
           <p className="lede">{selected.lensHook}</p>
         </div>

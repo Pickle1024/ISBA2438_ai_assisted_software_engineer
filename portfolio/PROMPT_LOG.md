@@ -32,6 +32,18 @@ Why this project: my existing portfolio was made in a no-code AI site builder. R
 
 **Result:** Claude Code read my private notes for job titles and dates, rewrote the project and About copy, and replaced the placeholders with my existing videos and screenshots. Using rules I had written in those notes about what I can show publicly, it removed one project and renamed another, so the site now has four projects instead of the five in prompt 1. It also trimmed one video and redrew one visual in SVG for the same reason.
 
+### 5. Order and visuals (my own words, sent to Claude Code)
+
+> make some changes to the website: the new order: storyteller, analyst, builder(use multi images and make them into a 16:9 whole image. instead of singel image because the window is not fullfilled now. I don't want the black fields ) , explorer for Zoe-OS build a animation like lam research, now a static image like ppt
+
+**Result:** Claude Code reordered the projects in `data/projects.ts`, combined my existing screenshots into one 16:9 image for TUTU, and rewrote `components/StatusWall.tsx` as an animated SVG driven by `requestAnimationFrame`.
+
+### 6. 3D lens (translated from Chinese)
+
+> Let's do the lens.
+
+**Result:** Claude Code added an interactive 3D lens to the home page with Three.js (`lib/lensScene.ts`, `components/LensViewer.tsx`), reusing the lens model from my earlier site. Dragging or scrolling the lens switches projects.
+
 ## Critique
 
 ### Example 1: contact form transport (`app/contact-me-server-form/actions.ts`)

@@ -1,6 +1,6 @@
 export type ProjectCover =
   | { kind: "video"; src: string; poster: string; alt: string; caption?: string }
-  | { kind: "image"; src: string; alt: string; fit?: "cover" | "contain"; caption?: string }
+  | { kind: "image"; src: string; alt: string; caption?: string }
   | { kind: "wall"; alt: string; caption?: string };
 
 export type GalleryItem = {
@@ -76,49 +76,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "tutu",
-    lens: "Builder",
-    lensHook: "I build things people pay for.",
-    title: "TUTU",
-    summary: "A grad-school exam prep brand I built from zero on Xiaohongshu, with no paid ads.",
-    role: "Founder",
-    period: "2022–2025",
-    stats: [
-      { value: "70K+", label: "followers, all platforms combined" },
-      { value: "480K+", label: "likes and saves" },
-      { value: "3,000+", label: "paying customers" },
-      { value: "1,600", label: "person community" },
-      { value: "200+", label: "videos" },
-      { value: "~40%", label: "CAC below the industry average" },
-    ],
-    context:
-      "Every year, millions of students in China prepare for the graduate school entrance exam, often on their own. I wanted to see whether clear, method-first content could build enough trust to grow into a business.",
-    whatIDid: [
-      "Made short videos that each teach one concrete method, like memorizing 150 words a day or answering interview questions in English.",
-      "Turned followers into a 1,600-person community.",
-      "Converted that trust into 3,000+ paying customers with organic content only.",
-    ],
-    links: [],
-    accent: "#ff5a3c",
-    cover: {
-      kind: "image",
-      src: "/media/tutu-top-post.jpg",
-      alt: "TUTU's top Xiaohongshu post, on memorizing 150 words a day, with 1.6M views",
-      fit: "contain",
-      caption: "Top post: 1.6M views, 150K+ likes.",
-    },
-    gallery: [
-      {
-        kind: "image",
-        src: "/media/tutu-profile.jpg",
-        width: 1206,
-        height: 409,
-        alt: "TUTU's Xiaohongshu profile showing 46K followers and 483.4K likes and saves",
-        caption: "The Xiaohongshu account alone: 46K followers, 483.4K likes and saves.",
-      },
-    ],
-  },
-  {
     slug: "marketing-agents",
     lens: "Analyst",
     lensHook: "Market data, turned into briefings each team can use.",
@@ -151,6 +108,38 @@ export const projects: Project[] = [
     },
   },
   {
+    slug: "tutu",
+    lens: "Builder",
+    lensHook: "I build things people pay for.",
+    title: "TUTU",
+    summary: "A grad-school exam prep brand I built from zero on Xiaohongshu, with no paid ads.",
+    role: "Founder",
+    period: "2022–2025",
+    stats: [
+      { value: "70K+", label: "followers, all platforms combined" },
+      { value: "480K+", label: "likes and saves" },
+      { value: "3,000+", label: "paying customers" },
+      { value: "1,600", label: "person community" },
+      { value: "200+", label: "videos" },
+      { value: "~40%", label: "CAC below the industry average" },
+    ],
+    context:
+      "Every year, millions of students in China prepare for the graduate school entrance exam, often on their own. I wanted to see whether clear, method-first content could build enough trust to grow into a business.",
+    whatIDid: [
+      "Made short videos that each teach one concrete method, like memorizing 150 words a day or answering interview questions in English.",
+      "Turned followers into a 1,600-person community.",
+      "Converted that trust into 3,000+ paying customers with organic content only.",
+    ],
+    links: [],
+    accent: "#ff5a3c",
+    cover: {
+      kind: "image",
+      src: "/media/tutu-collage.jpg",
+      alt: "Collage of TUTU's top Xiaohongshu posts and profile, including a post with 1.6M views",
+      caption: "Top post: 1.6M views, 150K+ likes. The Xiaohongshu account alone has 46K followers.",
+    },
+  },
+  {
     slug: "zoe-os",
     lens: "Explorer",
     lensHook: "Agents do the middle of the work. I keep the first and the last step.",
@@ -174,8 +163,8 @@ export const projects: Project[] = [
     accent: "#9cc9bd",
     cover: {
       kind: "wall",
-      alt: "Status wall: career and life automations, each ready and waiting for Zoe's final call",
-      caption: "The status wall. Every row stops at me.",
+      alt: "Animation of agents reading shared memory, screening roles, tailoring résumés and drafting notes, then stopping for Zoe's final call",
+      caption: "Illustrative animation of the job-search workflow. No real data shown.",
     },
   },
 ];

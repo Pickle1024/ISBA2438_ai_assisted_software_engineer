@@ -28,3 +28,7 @@ npm test        # validation rules
 4. The action returns `success`, `validation_error` or `server_error`, and the form shows a different banner for each.
 
 See [PROMPT_LOG.md](PROMPT_LOG.md) for the development process.
+
+## Third-party and non-MIT assets
+
+`public/models/lens.glb` was generated for my earlier portfolio in the web.it site builder. It and the images and videos in `public/media/` are not covered by the repository's MIT license. The 3D scene uses [Three.js](https://threejs.org) (MIT).
