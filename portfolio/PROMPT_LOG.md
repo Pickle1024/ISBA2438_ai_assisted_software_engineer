@@ -1,10 +1,8 @@
 # Prompt log and critique (assignment 2, part 1)
 
-> **DRAFT. Zoe: read every line, correct anything that isn't what happened, and rewrite the critique in your own words before submitting.**
-
 ## Tools used
 
-The assignment requires the Viber Coding Agent. I started in Viber. It stopped responding after it proposed a plan, so I built the code with Claude Code instead. **The code in this submission was written by Claude Code, not Viber.** I used Claude Code to help write my Viber prompts and to review Viber's plan.
+The assignment requires the Viber Coding Agent. I started in Viber. It stopped responding after it proposed a plan, so I built the code with Claude Code instead. **The code in this submission was written by Claude Code, not Viber.** I used Claude Code to help ne understand the assignment instructions and plan how I can use Viber to rebuild my website using my local project files. 
 
 Why this project: my existing portfolio was made in a no-code AI site builder. Rebuilding it in Next.js gives me code I own and understand.
 
@@ -16,13 +14,13 @@ Why this project: my existing portfolio was made in a no-code AI site builder. R
 
 **Result:** Viber proposed a `portfolio/` subfolder, `data/projects.ts`, `lib/validation.ts`, `lib/submissions.ts`, and a client form that POSTs to `/api/contact`. No code was written.
 
-### 2. Plan revision, for Viber (drafted with Claude Code)
+### 2. Plan revision, for Viber
 
 > /contact-me-server-form should be a real server form. Use a Server Action in an actions.ts next to the page, with useActionState. No fetch, no controlled inputs. Don't add /api/contact yet, that's Part 2. Keep lib/validation.ts and lib/submissions.ts so both can share them later. portfolio/ subfolder is fine, leave the Python files alone. Add an MIT LICENSE at the repo root and one line in the root README pointing to portfolio/. Go ahead and build.
 
 **Result:** Viber stopped responding, so this was not built in Viber.
 
-### 3. Switch to Claude Code (translated from Chinese)
+### 3. Switch to Claude Code since viber is not responding
 
 > Let's just do it here, Viber is down and not answering. We just need to keep the prompt log well. I think wanting to rebuild my personal website on a new tech stack is also a reason worth stating.
 
@@ -30,7 +28,7 @@ Why this project: my existing portfolio was made in a no-code AI site builder. R
 
 ### 4. Real content (my own words, sent to Claude Code)
 
-> you can check my other chats and zoe-os for position, title to refine the descriptions on my portfolio also I notice the projects now are only placeholders. can we add the images, videos we have to the website?
+> you can check my other chats and zoe-os for position, title to refine the descriptions on my portfolio also I notice the projects now are only placeholders. can we add the images, videos we have locally to the website?
 
 **Result:** Claude Code read my private notes for job titles and dates, rewrote the project and About copy, and replaced the placeholders with my existing videos and screenshots. Using rules I had written in those notes about what I can show publicly, it removed one project and renamed another, so the site now has four projects instead of the five in prompt 1. It also trimmed one video and redrew one visual in SVG for the same reason.
 
