@@ -83,3 +83,6 @@ Prices are stored as strings with exactly two decimal places.
 
 Errors print one concise line to standard error; the data file is never
 modified by a failed command.
+
+## Assignment 2: portfolio website
+The Next.js portfolio for assignment 2 is in [`portfolio/`](portfolio/).
