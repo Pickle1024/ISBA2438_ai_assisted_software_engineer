@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import ContactForm from "./ContactForm";
 
@@ -17,6 +18,10 @@ export default function ContactMeServerFormPage() {
           <li><a href="https://www.linkedin.com/in/lizhongwang/">LinkedIn</a></li>
           <li><a href="https://github.com/Pickle1024">GitHub Pickle1024</a></li>
         </ul>
+        <p className="plain-links">
+          This form goes through a Server Action. There’s also an{" "}
+          <Link className="text-link" href="/contact-me">API version</Link>.
+        </p>
       </header>
       <ContactForm />
     </div>

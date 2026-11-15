@@ -153,6 +153,12 @@ figcaption { margin-top: 8px; color: var(--muted); font-size: 0.875rem; }
 .timeline dt { font-weight: 600; }
 .timeline dd { margin: 0; color: var(--muted); }
 
+.blog-post { padding: 22px 0; border-top: 1px solid var(--line); }
+.blog-post h2 { margin: 0.1em 0 0.3em; }
+.blog-post .eyebrow { margin: 0; }
+.blog-title-link { text-decoration: none; }
+.blog-title-link:hover { text-decoration: underline; }
+
 .plain-links { margin: 16px 0 0; padding: 0; list-style: none; }
 .plain-links li { padding: 3px 0; }
 

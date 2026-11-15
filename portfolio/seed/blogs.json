@@ -1,0 +1,16 @@
+[
+  {
+    "id": "6f2cf6e2-0d3e-4b0c-9a4d-2f1a0f5f4a01",
+    "slug": "welcome-to-the-blog",
+    "title": "Welcome to the blog",
+    "content": "This is a sample post so the blog is not empty on a fresh clone. It is copied into storage/blogs.json, where every post is saved.",
+    "createdAt": "2026-11-02T09:00:00.000Z"
+  },
+  {
+    "id": "8a5d3f7b-11c2-4c8e-9e6a-3b2c1d0e5b02",
+    "slug": "how-this-blog-is-built",
+    "title": "How this blog is built",
+    "content": "Posts are served by the /api/blogs route handler, newest first. New posts are created with a POST request and stored as a JSON array.",
+    "createdAt": "2026-11-09T09:00:00.000Z"
+  }
+]
