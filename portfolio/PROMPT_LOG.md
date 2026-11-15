@@ -62,3 +62,63 @@ Why this project: my existing portfolio was made in a no-code AI site builder. R
 - **Proposed:** Claude Code split the email on `@` and `.` and did not use a regular expression. It does not trim the email.
 - **Decision:** Accepted, because the assignment rejects whitespace anywhere and trimming would hide that.
 - **Check and outcome:** `npm test` ran 21 tests and all passed, including `a@@b.com`, `a b@c.com`, `@b.com`, `a@b`, `a@b..com`, `a@.com` and `a@b.`, which are rejected. In the browser, blank fields and `a@b..com` showed field errors and kept what I typed. Corrupting the JSON file on purpose showed the server-error banner and left the file unchanged.
+
+---
+
+# Prompt log and critique (assignment 2, part 2)
+
+## Tools used
+
+Viber worked again for this part, so everything below (the API contact form, the blog, the tests) was built in Viber, the tool the assignment requires. I kept the same workflow that worked in part 1: Viber proposes files and contracts before writing code, I answer its questions and override it when needed, then I verify with `npm test`, `npm run build` and `curl`.
+
+## Major prompts
+
+### 1. Part 2 scope: second contact form through an API
+
+> OK now let's start part 2. I want a second contact page at /contact-me. Same three fields (name, email, message) with labels, but this time the form sends the data with fetch to a POST route handler at app/api/contact/route.ts instead of using a Server Action. Please reuse validateContact and saveSubmission instead of writing new validation [...] I'd like the API to return 201 when it saves, 400 with the field errors when validation fails, and 500 if saving breaks, and the page should show those clearly [...] Tell me which files you plan to add or change before you write anything.
+
+**Result:** Viber listed the three new files and the response contract before writing anything, then asked how to handle two contact pages in the navigation. I chose: point the nav's Contact at `/contact-me` and put a small link to the other form on each page. It then built `app/api/contact/route.ts` and `app/contact-me/` (page + fetch form), reusing `lib/validation.ts` and `lib/submissions.ts` unchanged. Verified with curl: valid post → 201, each bad field → 400 with its own error, broken JSON → 400, GET → 405, both cross-links in the served HTML.
+
+### 2. Repo housekeeping and a walkthrough
+
+> My portfolio for part 1 is already on GitHub (main, commit e016eb3), but this folder is behind and has an old untracked portfolio/ folder from an earlier try. Please rename that folder to portfolio-old so nothing gets lost, pull main, and then read portfolio/ and tell me how the current contact form works, from app/contact-me-server-form to lib/validation.ts and lib/submissions.ts.
+
+**Result:** Viber renamed my half-built folder to `portfolio-old/`, fast-forwarded main to `e016eb3`, and walked me through the form flow file by file, which I used to prepare my demo explanation.
+
+### 3. Blog storage, API and seed
+
+> Next, blogs. Add a lib/blogs.ts that reads and writes storage/blogs.json the same way lib/submissions.ts does. Then app/api/blogs/route.ts with a GET that returns all posts newest first, and a POST that takes a title and content, rejects them if they're blank after trimming, makes a slug from the title (add a number if that slug is taken), and returns the new post with 201. Since storage/ is gitignored, please also add a small seed file with two example posts, so /blogs isn't empty when someone clones the repo.
+
+**Result:** Viber built `lib/blogs.ts` with the same discipline as `lib/submissions.ts` (server-only, serialized writes, atomic temp-file rename), a seed fallback, `app/api/blogs/route.ts`, a `/blogs` page and a nav entry. Verified with curl: seed posts on a fresh clone, slugs `hello-world`, `hello-world-2` for a duplicate title, `post` for a Chinese-only title, and 400s with field errors for blanks.
+
+### 4. Blog pages
+
+> Now the pages. /admin/blogs: a form with title and content that POSTs to /api/blogs with fetch, shows any errors from the API, and links to the new post after it's created. /blogs: load the list by calling GET /api/blogs from the client [...] /blogs/[slug]: show one post by reading lib/blogs.ts on the server, and use notFound() for a slug that doesn't exist, same as projects/[slug] does. Add Blogs to the nav, but leave the admin page out of it.
+
+**Result:** Viber added the admin form (success banner links to the new post), a client-side blog list, and a server-rendered detail page with a friendly 404. The first build failed on a wrong relative import (`../api` from one folder too deep) and Viber fixed it after reading the error.
+
+### 5. Tests and a full check
+
+> let's check everything. Add tests for the two APIs (blank fields, a bad email, a valid submission, a duplicate blog title), then run the tests, lint and build and tell me what passed or failed. Then walk me through what happens from clicking submit on /contact-me to the line being written in submissions.json, with file names, so I can explain it myself in the demo.
+
+**Result:** `tests/api.test.ts` added five tests, and all 26 tests passed; `npm run lint` and `npm run build` passed clean.
+
+## Critique
+
+### Example 1: how the blog seed works (`lib/blogs.ts`)
+- **Proposed:** I only said "add a small seed file so /blogs isn't empty". Viber made reads fall back to a tracked `seed/blogs.json` when `storage/blogs.json` does not exist, and let GET stay read-only — the real file is only created on the first POST, already containing the seed posts.
+- **Decision:** Accepted.
+- **Why:** Copying the seed into storage on first read would make a GET write to disk, which is surprising and breaks on read-only setups. The fallback keeps a fresh clone working and keeps runtime data out of git.
+- **Check and outcome:** With `storage/` deleted, `GET /api/blogs` returned the two seed posts and no storage folder appeared. After one POST, the file held the seed posts plus the new one.
+
+### Example 2: rendering mode of `/blogs/[slug]` vs `/projects/[slug]`
+- **Proposed:** Viber skipped `generateStaticParams` (which the projects template uses) and marked the blog detail page `force-dynamic`.
+- **Decision:** Accepted.
+- **Why:** Projects are static data in memory; blog posts change at runtime through the API, so prerendering at build time would freeze the pages.
+- **Check and outcome:** After a curl POST, the new slug's page returned 200 immediately without a rebuild, and an unknown slug returned 404 with the "This post isn't in the can" page.
+
+### Example 3: testing route handlers without Next.js running (`tests/`)
+- **Proposed:** Import `app/api/contact/route.ts` and `app/api/blogs/route.ts` directly into `node --test`.
+- **Decision:** Accepted with two additions Viber proposed: a small module-resolver hook (`tests/alias-hooks.mjs`) so Node understands the `@/` import alias, and `--conditions=react-server` so `import "server-only"` does not throw. The tests also `chdir` into a temp folder first, so they write to a temp storage and never touch real submissions.
+- **Why:** Testing the real handlers (not a copy of their logic) is what makes the tests meaningful; the alternative would be testing against the running dev server, which is slow and brittle.
+- **Check and outcome:** 26/26 tests pass, and `portfolio/storage/` stayed empty after `npm test`.
