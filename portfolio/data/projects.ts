@@ -14,6 +14,7 @@ export type GalleryItem = {
 };
 
 export type Project = {
+  id: string;
   slug: string;
   lens: string;
   lensHook: string;
@@ -30,8 +31,11 @@ export type Project = {
   gallery?: GalleryItem[];
 };
 
-export const projects: Project[] = [
+// Seed content. Once a project is created, edited or deleted through
+// /api/projects, the live copy lives in storage/projects.json.
+export const seedProjects: Project[] = [
   {
+    id: "proj-picklens",
     slug: "picklens",
     lens: "Storyteller",
     lensHook: "I make complex things easy to understand through video, motion and narrative.",
@@ -76,6 +80,7 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "proj-marketing-agents",
     slug: "marketing-agents",
     lens: "Analyst",
     lensHook: "Market data, turned into briefings each team can use.",
@@ -108,6 +113,7 @@ export const projects: Project[] = [
     },
   },
   {
+    id: "proj-tutu",
     slug: "tutu",
     lens: "Builder",
     lensHook: "I build things people pay for.",
@@ -140,6 +146,7 @@ export const projects: Project[] = [
     },
   },
   {
+    id: "proj-zoe-os",
     slug: "zoe-os",
     lens: "Explorer",
     lensHook: "Agents do the middle of the work. I keep the first and the last step.",
@@ -168,7 +175,3 @@ export const projects: Project[] = [
     },
   },
 ];
-
-export function getProjectBySlug(slug: string): Project | undefined {
-  return projects.find((project) => project.slug === slug);
-}

@@ -4,12 +4,15 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { slugifyTitle, uniqueSlug } from "@/lib/slug";
+
 export type BlogPost = {
   id: string;
   slug: string;
   title: string;
   content: string;
   createdAt: string;
+  updatedAt?: string;
 };
 
 const STORAGE_DIR = path.join(process.cwd(), "storage");
@@ -56,24 +59,8 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | undefined>
   return posts.find((post) => post.slug === slug);
 }
 
-export function slugifyTitle(title: string): string {
-  const slug = title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return slug === "" ? "post" : slug;
-}
-
-function uniqueSlug(base: string, taken: Set<string>): string {
-  let candidate = base;
-  let counter = 2;
-  while (taken.has(candidate)) {
-    candidate = `${base}-${counter}`;
-    counter += 1;
-  }
-  return candidate;
-}
-
+// Returns undefined when the id does not exist, so routes can send 404
+// while real storage failures still throw.
 export async function createPost(title: string, content: string): Promise<BlogPost> {
   const task = async (): Promise<BlogPost> => {
     const posts = await readPosts();
@@ -93,3 +80,44 @@ export async function createPost(title: string, content: string): Promise<BlogPo
   writeQueue = write.catch(() => undefined);
   return write;
 }
+
+export async function updatePost(
+  id: string,
+  input: { title: string; content: string },
+): Promise<BlogPost | undefined> {
+  const task = async (): Promise<BlogPost | undefined> => {
+    const posts = await readPosts();
+    const existing = posts.find((post) => post.id === id);
+    if (!existing) return undefined;
+    existing.title = input.title.trim();
+    existing.content = input.content.trim();
+    // A new title gets a fresh slug; the post's own slug is excluded.
+    existing.slug = uniqueSlug(
+      slugifyTitle(existing.title),
+      new Set(posts.filter((post) => post.id !== id).map((post) => post.slug)),
+    );
+    existing.updatedAt = new Date().toISOString();
+    await writePosts(posts);
+    return existing;
+  };
+
+  const write = writeQueue.then(task);
+  writeQueue = write.catch(() => undefined);
+  return write;
+}
+
+// Returns false when the id does not exist.
+export async function deletePost(id: string): Promise<boolean> {
+  const task = async (): Promise<boolean> => {
+    const posts = await readPosts();
+    const next = posts.filter((post) => post.id !== id);
+    if (next.length === posts.length) return false;
+    await writePosts(next);
+    return true;
+  };
+
+  const write = writeQueue.then(task);
+  writeQueue = write.catch(() => undefined);
+  return write;
+}
+

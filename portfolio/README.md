@@ -20,7 +20,10 @@ npm test        # validation rules
 | `/projects/[slug]` | One template for every project, with a friendly page for unknown slugs |
 | `/blogs` | Blog list, loaded in the browser from `GET /api/blogs` |
 | `/blogs/[slug]` | One post, read on the server from `lib/blogs.ts`, with a friendly page for unknown slugs |
-| `/admin/blogs` | Write and publish a post through `POST /api/blogs` (not in the navigation) |
+| `/prompt-lab` | The prompts and skills behind my videos, with copy buttons, LocalStorage favorites and per-card comments |
+| `/admin/blogs` | Publish, edit and delete posts through `/api/blogs` (not in the navigation) |
+| `/admin/projects` | Add, edit and delete projects through `/api/projects` (not in the navigation) |
+| `/admin/contact` | Read, edit and delete contact submissions through `/api/contact` (not in the navigation) |
 | `/contact-me` | Contact form that posts JSON to the `/api/contact` route handler |
 | `/contact-me-server-form` | Contact form handled by a Server Action |
 
@@ -40,9 +43,25 @@ Both reuse `validateContact` from `lib/validation.ts` and `saveSubmission` from 
 
 ## Blog
 
-`GET /api/blogs` returns every post as a JSON array, newest first. `POST /api/blogs` takes a JSON body with `title` and `content`, rejects blanks after trimming, turns the title into a slug (a number is added if the slug is taken) and returns the new post with `201`. Posts live in `storage/blogs.json`, read and written by `lib/blogs.ts` with the same serialized atomic writes as `lib/submissions.ts`. Because that folder is gitignored, `seed/blogs.json` holds two example posts that back the blog on a fresh clone.
+`GET /api/blogs` returns every post as a JSON array, newest first. `POST /api/blogs` takes a JSON body with `title` and `content`, rejects blanks after trimming, turns the title into a slug (a number is added if the slug is taken) and returns the new post with `201`. `PUT /api/blogs/[id]` edits a post (a new title gets a fresh slug) and `DELETE /api/blogs/[id]` removes it; both return `404` for an unknown id. Posts live in `storage/blogs.json`, read and written by `lib/blogs.ts` with the same serialized atomic writes as `lib/submissions.ts`. Because that folder is gitignored, `seed/blogs.json` holds two example posts that back the blog on a fresh clone.
 
-`/blogs` fetches that API from the browser, `/blogs/[slug]` reads the same file on the server, and `/admin/blogs` is a publish form that shows the API's errors and links to the post it just created.
+`/blogs` fetches that API from the browser, `/blogs/[slug]` reads the same file on the server, and `/admin/blogs` lists every post with an inline edit form, a two-step delete and the publish form.
+
+## Projects
+
+Projects used to be a constant in `data/projects.ts`. They are now rows in `storage/projects.json`, read and written by `lib/projects.ts` with the same serialized atomic writes as blogs. On a fresh clone the four seed projects come back from `data/projects.ts`, and the first create or edit materialises `storage/projects.json`.
+
+`/api/projects` supports the full set: `GET` lists all, `POST` creates (title and lens required, the title becomes a unique slug, missing fields get plain defaults), `PUT /api/projects/[id]` edits (a new title re-slugs) and `DELETE /api/projects/[id]` removes. Unknown ids return `404`; blank titles return `400` with a field error. Every call writes one `[projects]` line to the server log.
+
+`/`, `/projects` and `/projects/[slug]` read the file on the server per request (`force-dynamic`), so an edit in `/admin/projects` shows up immediately.
+
+## Prompt Lab
+
+`/prompt-lab` is the local showcase for the prompts and Claude skills behind my videos. Each card has one-click copy buttons, an X embed that only mounts after a click, and a comment section backed by `/api/comments` (create, edit and delete with `400`/`404` handling). Favorites are stored in LocalStorage — `lib/favorites.ts` holds the pure storage functions, `hooks/useFavorites.ts` the React hook — so the page keeps state without a login.
+
+## Contact admin
+
+`/admin/contact` lists every submission from `storage/submissions.json` newest first, with inline edit (`PUT /api/contact/[id]`, reusing `validateContact`, so a bad email is rejected) and a two-step delete (`DELETE /api/contact/[id]`). `GET /api/contact` backs the list.
 
 See [PROMPT_LOG.md](PROMPT_LOG.md) for the development process.
 

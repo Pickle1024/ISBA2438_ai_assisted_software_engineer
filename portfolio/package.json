@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --conditions=react-server --import ./tests/register-alias.mjs --test tests/validation.test.ts tests/api.test.ts"
+    "test": "node --experimental-strip-types --conditions=react-server --import ./tests/register-alias.mjs --test tests/validation.test.ts tests/api.test.ts tests/favorites.test.ts tests/comments-api.test.ts tests/contact-crud-api.test.ts tests/projects-api.test.ts"
   },
   "dependencies": {
     "next": "16.4.5",

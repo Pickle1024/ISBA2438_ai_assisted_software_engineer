@@ -4,6 +4,81 @@ export type ContactInput = {
   message: string;
 };
 
+export type CommentInput = {
+  cardId: string;
+  name: string;
+  message: string;
+};
+
+export type CommentErrors = {
+  cardId?: string;
+  name?: string;
+  message?: string;
+};
+
+export const COMMENT_NAME_MAX = 60;
+export const COMMENT_MESSAGE_MAX = 600;
+
+export type PostInput = {
+  title: string;
+  content: string;
+};
+
+export type PostErrors = {
+  title?: string;
+  content?: string;
+};
+
+// Blog post rules shared by POST (create) and PUT (edit).
+export function validatePost(title: string, content: string): PostErrors {
+  const errors: PostErrors = {};
+  if (title.trim() === "") errors.title = "Please enter a title.";
+  if (content.trim() === "") errors.content = "Please enter content.";
+  return errors;
+}
+
+export type ProjectInput = {
+  title: string;
+  lens: string;
+  lensHook?: string;
+  summary?: string;
+  role?: string;
+  period?: string;
+  accent?: string;
+  context?: string;
+  whatIDid?: string;
+};
+
+export type ProjectErrors = {
+  title?: string;
+  lens?: string;
+};
+
+// Project rules shared by POST (create) and PUT (edit). Every other field is
+// optional; the storage layer fills in defaults.
+export function validateProject(input: ProjectInput): ProjectErrors {
+  const errors: ProjectErrors = {};
+  if (input.title.trim() === "") errors.title = "Please enter a title.";
+  if (input.lens.trim() === "") errors.lens = "Please enter a lens.";
+  return errors;
+}
+
+// Comment rules shared by POST (create) and PUT (edit).
+export function validateComment(name: string, message: string): CommentErrors {
+  const errors: CommentErrors = {};
+  if (name.trim() === "") {
+    errors.name = "Please enter your name.";
+  } else if (name.trim().length > COMMENT_NAME_MAX) {
+    errors.name = `Please use a shorter name — ${COMMENT_NAME_MAX} characters max.`;
+  }
+  if (message.trim() === "") {
+    errors.message = "Please enter a comment.";
+  } else if (message.trim().length > COMMENT_MESSAGE_MAX) {
+    errors.message = `Please shorten your comment — ${COMMENT_MESSAGE_MAX} characters max.`;
+  }
+  return errors;
+}
+
 export type ContactField = keyof ContactInput;
 export type ContactErrors = Partial<Record<ContactField, string>>;
 

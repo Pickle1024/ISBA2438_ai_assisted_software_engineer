@@ -1,7 +1,11 @@
 import LensSelector from "@/components/LensSelector";
-import { projects } from "@/data/projects";
+import { getAllProjects } from "@/lib/projects";
 
-export default function HomePage() {
+// Projects live in storage/projects.json, so the page renders per request.
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const projects = await getAllProjects();
   return (
     <LensSelector projects={projects}>
       <div className="home-intro">

@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 
 import ProjectCard from "@/components/ProjectCard";
-import { projects } from "@/data/projects";
+import { getAllProjects } from "@/lib/projects";
 
 export const metadata: Metadata = { title: "Projects" };
 
-export default function ProjectsPage() {
+// Projects live in storage/projects.json, so the page renders per request.
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  const projects = await getAllProjects();
   return (
     <div className="page">
       <p className="eyebrow">Projects</p>

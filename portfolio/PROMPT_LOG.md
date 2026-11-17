@@ -122,3 +122,63 @@ Viber worked again for this part, so everything below (the API contact form, the
 - **Decision:** Accepted with two additions Viber proposed: a small module-resolver hook (`tests/alias-hooks.mjs`) so Node understands the `@/` import alias, and `--conditions=react-server` so `import "server-only"` does not throw. The tests also `chdir` into a temp folder first, so they write to a temp storage and never touch real submissions.
 - **Why:** Testing the real handlers (not a copy of their logic) is what makes the tests meaningful; the alternative would be testing against the running dev server, which is slow and brittle.
 - **Check and outcome:** 26/26 tests pass, and `portfolio/storage/` stayed empty after `npm test`.
+
+---
+
+# Prompt log and critique (midterm)
+
+## Tools used
+
+Viber for everything in this part. Same workflow: Viber proposes the files and contracts, I review in the browser after each step, then tests, lint, build and curl before moving on.
+
+## Major prompts
+
+### 1. Midterm scope and the Prompt Lab idea
+
+> [pasted the midterm requirements] 现在的项目里 blogs 已经有了……LocalStorage 功能和后端功能都不能跟 blogs/projects/contact 重复，四个 API 对象都要有完整 CRUD 界面。我的想法：加一个 Prompt Lab 页面，把我做视频用的 AI prompts 和 Claude skills 分享出来——收藏用 LocalStorage（不跟 toggle 重复），留言用后端 CRUD（自定义第三种对象）。我们一步步来：1. 页面和卡片先能看，2. 一键复制，3. 收藏，4. 留言。
+
+**Result:** Viber agreed the split satisfies both "different from previous features" rules and built step 1: `data/promptLab.ts` with seven cards (three prompt cards, four skill cards), a three-column showcase, `public/skills/` with the real skill folders and zips, and a Prompt Lab entry in the nav.
+
+### 2. X embeds for the video cards
+
+> 视频卡片直接嵌 X 的官方 iframe 会拖慢页面吗？给两个方案。
+
+**Result:** Viber offered (A) lazy iframes for every card and (B) a poster-style card that opens a `<dialog>` with the official X embed only after a click. I chose B. The page loads with zero iframes.
+
+### 3. Copy buttons and favorites
+
+> 每张卡加一键复制…… then: 收藏功能用 LocalStorage，注意代码要能测。
+
+**Result:** Viber added copy buttons with a clipboard fallback and a two-second "Copied ✓", then `lib/favorites.ts` as pure functions that take a `Storage` object (testable without a browser), `hooks/useFavorites.ts`, and an All/Favorites toggle with an empty state. Six new tests.
+
+### 4. Comments with full CRUD
+
+> 留言做成完整 CRUD：名字+留言，空/太长/cardId 不存在 → 400 且错误信息明确，更新/删除不存在的 → 404，服务器每个 API 调用打一行日志（方法、路径、状态码、内容），界面上每条留言可 Edit/Delete 且列表立刻更新，加载/出错/空三种状态都要有。
+
+**Result:** Viber built `lib/comments.ts` (same serialized atomic writes as blogs), `/api/comments` and `/api/comments/[id]`, a `CommentSection` client component with lazy loading, inline edit and two-step delete, and eight API tests. Server log lines like `[comments] POST /api/comments 201 — "Zoe: …"`.
+
+### 5. 现在就继续 (the remaining CRUD)
+
+> 现在就继续
+
+**Result:** With the plan already agreed, Viber finished the rest of the midterm checklist in one pass: `PUT`/`DELETE /api/blogs/[id]` plus an `/admin/blogs` list with inline edit and delete; `GET`/`PUT`/`DELETE` for `/api/contact` plus an `/admin/contact` page; projects moved from a constant into `storage/projects.json` with `/api/projects` CRUD and an `/admin/projects` page; shared slug helpers extracted to `lib/slug.ts`; one `logApiCall` helper so blogs, contact, projects and comments all log in the same format. 52/52 tests, lint clean, build clean.
+
+## Critique
+
+### Example 1: where the projects seed lives (`data/projects.ts`, `lib/projects.ts`)
+- **Proposed:** Viber first suggested converting all four projects into `seed/projects.json`, mirroring the blogs seed.
+- **Decision:** Kept `data/projects.ts` as the seed source instead, and made `lib/projects.ts` fall back to it when `storage/projects.json` does not exist.
+- **Why:** The projects are long, typed objects with covers and galleries; transcribing them into JSON by hand invited mistakes, while importing the existing constant keeps the type checking. The graded requirement — projects persisted to backend JSON and editable through CRUD — is still met: after the first create, edit or delete, the live copy is in `storage/projects.json`.
+- **Check and outcome:** On a fresh clone `GET /api/projects` returned the four seed projects and created no file; after one create-and-delete cycle the file existed with the four projects again.
+
+### Example 2: projects pages switched from prerendered to per-request (`app/page.tsx`, `app/projects/page.tsx`, `app/projects/[slug]/page.tsx`)
+- **Proposed:** Keep `generateStaticParams` and the static pages after moving projects to the file-based store.
+- **Decision:** Removed `generateStaticParams`, marked the three pages `force-dynamic`, and made `getProjectBySlug` async.
+- **Why:** Projects now change at runtime through `/api/projects`, so build-time prerendering would freeze them — the same reason `/blogs/[slug]` is dynamic. The build's type check caught the one page that still called the now-async reader without `await`.
+- **Check and outcome:** Created a project through the API, its detail page returned 200 immediately without a rebuild; after `DELETE` the same page returned 404.
+
+### Example 3: reading LocalStorage without cascading renders (`hooks/useFavorites.ts`)
+- **Proposed:** Read LocalStorage and call `setFavorites` directly inside the mount effect.
+- **Decision:** Wrapped the read in `queueMicrotask` with a `cancelled` flag.
+- **Why:** The React lint rule rejects synchronous `setState` inside an effect because it forces an extra render before paint. The microtask keeps the first render (and hydration) identical to the server output while still restoring favorites right after mount.
+- **Check and outcome:** `npm run lint` went from four errors to zero, and favorites still reappear after a reload.

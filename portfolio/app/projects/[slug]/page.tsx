@@ -5,24 +5,24 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 
 import FilmFrame from "@/components/FilmFrame";
-import { getProjectBySlug, projects } from "@/data/projects";
+import { getProjectBySlug } from "@/lib/projects";
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }));
-}
+// Projects live in storage/projects.json, so the page renders per request.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  return { title: getProjectBySlug(slug)?.title ?? "Project not found" };
+  const project = await getProjectBySlug(slug);
+  return { title: project?.title ?? "Project not found" };
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
   return (
