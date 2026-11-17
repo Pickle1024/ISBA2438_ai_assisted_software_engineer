@@ -133,33 +133,33 @@ Viber for everything in this part. Same workflow: Viber proposes the files and c
 
 ## Major prompts
 
-### 1. Midterm scope and the Prompt Lab idea
+### 1. Midterm scope and the Prompt Lab idea (translated from Chinese)
 
-> [pasted the midterm requirements] 现在的项目里 blogs 已经有了……LocalStorage 功能和后端功能都不能跟 blogs/projects/contact 重复，四个 API 对象都要有完整 CRUD 界面。我的想法：加一个 Prompt Lab 页面，把我做视频用的 AI prompts 和 Claude skills 分享出来——收藏用 LocalStorage（不跟 toggle 重复），留言用后端 CRUD（自定义第三种对象）。我们一步步来：1. 页面和卡片先能看，2. 一键复制，3. 收藏，4. 留言。
+> [pasted the midterm requirements] The project already has blogs... The LocalStorage feature and the backend feature can't repeat blogs/projects/contact, and all four API objects need full CRUD interfaces. My idea: add a Prompt Lab page that shares the AI prompts and Claude skills behind my videos — favorites use LocalStorage (no clash with the toggle), comments use backend CRUD (the custom third object). Let's go step by step: 1. get the page and cards on screen, 2. one-click copy, 3. favorites, 4. comments.
 
 **Result:** Viber agreed the split satisfies both "different from previous features" rules and built step 1: `data/promptLab.ts` with seven cards (three prompt cards, four skill cards), a three-column showcase, `public/skills/` with the real skill folders and zips, and a Prompt Lab entry in the nav.
 
-### 2. X embeds for the video cards
+### 2. X embeds for the video cards (translated from Chinese)
 
-> 视频卡片直接嵌 X 的官方 iframe 会拖慢页面吗？给两个方案。
+> If every video card embeds X's official iframe directly, will that slow the page down? Give me two options.
 
 **Result:** Viber offered (A) lazy iframes for every card and (B) a poster-style card that opens a `<dialog>` with the official X embed only after a click. I chose B. The page loads with zero iframes.
 
-### 3. Copy buttons and favorites
+### 3. Copy buttons and favorites (translated from Chinese)
 
-> 每张卡加一键复制…… then: 收藏功能用 LocalStorage，注意代码要能测。
+> Add one-click copy to every card... then: favorites should use LocalStorage, and make sure the code is testable.
 
 **Result:** Viber added copy buttons with a clipboard fallback and a two-second "Copied ✓", then `lib/favorites.ts` as pure functions that take a `Storage` object (testable without a browser), `hooks/useFavorites.ts`, and an All/Favorites toggle with an empty state. Six new tests.
 
-### 4. Comments with full CRUD
+### 4. Comments with full CRUD (translated from Chinese)
 
-> 留言做成完整 CRUD：名字+留言，空/太长/cardId 不存在 → 400 且错误信息明确，更新/删除不存在的 → 404，服务器每个 API 调用打一行日志（方法、路径、状态码、内容），界面上每条留言可 Edit/Delete 且列表立刻更新，加载/出错/空三种状态都要有。
+> Make comments full CRUD: name + message; blank / too long / unknown cardId → 400 with a clear error; update or delete of an id that doesn't exist → 404; the server logs one line per API call (method, path, status, content); every comment gets Edit/Delete in the UI and the list updates immediately; and loading, error and empty states are all required.
 
 **Result:** Viber built `lib/comments.ts` (same serialized atomic writes as blogs), `/api/comments` and `/api/comments/[id]`, a `CommentSection` client component with lazy loading, inline edit and two-step delete, and eight API tests. Server log lines like `[comments] POST /api/comments 201 — "Zoe: …"`.
 
-### 5. 现在就继续 (the remaining CRUD)
+### 5. "Continue now" — the remaining CRUD (translated from Chinese)
 
-> 现在就继续
+> Continue now.
 
 **Result:** With the plan already agreed, Viber finished the rest of the midterm checklist in one pass: `PUT`/`DELETE /api/blogs/[id]` plus an `/admin/blogs` list with inline edit and delete; `GET`/`PUT`/`DELETE` for `/api/contact` plus an `/admin/contact` page; projects moved from a constant into `storage/projects.json` with `/api/projects` CRUD and an `/admin/projects` page; shared slug helpers extracted to `lib/slug.ts`; one `logApiCall` helper so blogs, contact, projects and comments all log in the same format. 52/52 tests, lint clean, build clean.
 
