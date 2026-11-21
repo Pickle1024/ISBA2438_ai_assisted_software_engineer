@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter_Tight, Newsreader } from "next/font/google";
 import type { ReactNode } from "react";
 
+import SiteFooter from "@/components/SiteFooter";
 import SiteNav from "@/components/SiteNav";
 
 import "./globals.css";
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <SiteNav />
         <main>{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -163,6 +163,12 @@ Viber for everything in this part. Same workflow: Viber proposes the files and c
 
 **Result:** With the plan already agreed, Viber finished the rest of the midterm checklist in one pass: `PUT`/`DELETE /api/blogs/[id]` plus an `/admin/blogs` list with inline edit and delete; `GET`/`PUT`/`DELETE` for `/api/contact` plus an `/admin/contact` page; projects moved from a constant into `storage/projects.json` with `/api/projects` CRUD and an `/admin/projects` page; shared slug helpers extracted to `lib/slug.ts`; one `logApiCall` helper so blogs, contact, projects and comments all log in the same format. 52/52 tests, lint clean, build clean.
 
+### 6. Props split and an admin entry (translated from Chinese)
+
+> I checked the grading rubric again before recording. Two fixes: (1) MIDTERM-08 wants the custom feature's components to receive data through props — right now CommentSection fetches and renders the list itself, so no comment data is passed to a child. Split the list into its own CommentList component (each comment can also be a CommentItem): CommentSection keeps the fetch and the create/update/delete calls and passes the comments array plus onEdit/onDelete callbacks down as props. (2) MIDTERM-07 wants clear navigation to the new feature — the three admin pages have no way in. Add a low-key but findable entry, like an Admin link in the footer, leading to a simple /admin page listing the three admin pages. Don't change functionality or styling.
+
+**Result:** Viber split `components/CommentItem.tsx` and `components/CommentList.tsx` out of `CommentSection.tsx`: the section fetches and owns the data, the list renders it from props, and every change bubbles back up through two callbacks. It added a site-wide footer with a quiet Admin link to a new `/admin` index page. No API, style or behavior changes; 52/52 tests, lint and build clean.
+
 ## Critique
 
 ### Example 1: where the projects seed lives (`data/projects.ts`, `lib/projects.ts`)
@@ -182,3 +188,9 @@ Viber for everything in this part. Same workflow: Viber proposes the files and c
 - **Decision:** Wrapped the read in `queueMicrotask` with a `cancelled` flag.
 - **Why:** The React lint rule rejects synchronous `setState` inside an effect because it forces an extra render before paint. The microtask keeps the first render (and hydration) identical to the server output while still restoring favorites right after mount.
 - **Check and outcome:** `npm run lint` went from four errors to zero, and favorites still reappear after a reload.
+
+### Example 4: where edit and delete state lives (`components/CommentItem.tsx`)
+- **Proposed:** Keep every piece of edit/delete state (which row is open, which is confirming, in-flight flags) in `CommentSection` and pass them down with a callback per interaction.
+- **Decision:** Only the data (`comments`) and two async callbacks (`onEdit`, `onDelete`) travel through props; the open/confirm state of a row is local to `CommentItem`, and `onEdit` returns the server's field errors so the row can keep its form open.
+- **Why:** The rubric asks me to point at where data comes from the server and how it reaches components through props. Data flows one way down; view-only state belongs to the row that owns it. Lifting it would have meant a prop and a callback for every bit of UI state.
+- **Check and outcome:** Editing a comment updates the list instantly because the parent saves the change and the new array flows down through props; all 52 tests still pass because the API contract did not change.

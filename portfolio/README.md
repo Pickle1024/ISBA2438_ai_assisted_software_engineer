@@ -21,6 +21,7 @@ npm test        # validation rules
 | `/blogs` | Blog list, loaded in the browser from `GET /api/blogs` |
 | `/blogs/[slug]` | One post, read on the server from `lib/blogs.ts`, with a friendly page for unknown slugs |
 | `/prompt-lab` | The prompts and skills behind my videos, with copy buttons, LocalStorage favorites and per-card comments |
+| `/admin` | Index of the three admin pages, linked from the footer (not in the navigation) |
 | `/admin/blogs` | Publish, edit and delete posts through `/api/blogs` (not in the navigation) |
 | `/admin/projects` | Add, edit and delete projects through `/api/projects` (not in the navigation) |
 | `/admin/contact` | Read, edit and delete contact submissions through `/api/contact` (not in the navigation) |

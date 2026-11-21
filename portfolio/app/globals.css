@@ -503,3 +503,8 @@ figcaption { margin-top: 8px; color: var(--muted); font-size: 0.875rem; }
 .admin-list { display: grid; gap: 16px; margin-top: 24px; }
 .admin-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
 .admin-item:last-child { border-bottom: 0; }
+
+.site-footer { border-top: 1px solid var(--line); margin-top: 64px; padding: 20px 32px; }
+.site-footer p { display: flex; justify-content: space-between; align-items: center; }
+.site-footer a { color: var(--muted); }
+.site-footer a:hover { color: var(--ink); }
